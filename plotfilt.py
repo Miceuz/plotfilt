@@ -27,7 +27,7 @@ if len(sys.argv) < 2:
 	print "each weight represents a single filter cascaded in series"
 	exit(1)
 
-
+MAXVAL = 65535
 
 filterCascade = np.array([])
 
@@ -41,7 +41,7 @@ for i in range(1, len(sys.argv)):
 filtered = 0
 
 stepResponse = np.zeros(1);
-step = 65535
+step = MAXVAL
 
 filter1 = Filter(4)
 
@@ -49,21 +49,21 @@ while filtered < step*0.999:
 	filtered = step
 	for f in filterCascade:
 		filtered = f.filter(filtered)
-	stepResponse = np.append(stepResponse, filtered * 1.0 / 65535)
+	stepResponse = np.append(stepResponse, filtered * 1.0 / MAXVAL)
 
 plot(stepResponse, label="Step response")
 
 
 for f in filterCascade:
-	f.reset(65535/2)
+	f.reset(MAXVAL/2)
 noise = np.random.random(len(stepResponse))
 noiseFiltered = np.zeros(0)
 
 for v in noise:
-	filtered = int(v * 65535)
+	filtered = int(v * MAXVAL)
 	for f in filterCascade:
 		filtered = f.filter(filtered)
-	noiseFiltered = np.append(noiseFiltered, filtered*1.0/65535)
+	noiseFiltered = np.append(noiseFiltered, filtered*1.0/MAXVAL)
 
 plot(noiseFiltered, label="Filtered noise")
 
@@ -73,18 +73,18 @@ for f in filterCascade:
 
 impulseResponse = np.zeros(0)
 
-impulse = 65535
+impulse = MAXVAL
 
 filtered = impulse
 for f in filterCascade:
 	filtered = f.filter(filtered)
-impulseResponse = np.append(impulseResponse, filtered*1.0/65535)
+impulseResponse = np.append(impulseResponse, filtered*1.0/MAXVAL)
 
 for i in range(len(stepResponse)-1):
 	filtered = 0
 	for f in filterCascade:
 		filtered = f.filter(filtered)
-	impulseResponse = np.append(impulseResponse, filtered*1.0/65535)
+	impulseResponse = np.append(impulseResponse, filtered*1.0/MAXVAL)
 plot(impulseResponse, label="Impulse response")
 legend()
 show()
